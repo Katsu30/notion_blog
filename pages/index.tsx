@@ -1,10 +1,10 @@
 import Head from 'next/head'
+import { Post } from "@/domain/models/Post";
 import { getAllposts } from '@/lib/notionAPI'
 import { GetStaticProps } from 'next';
-import { PageObjectResponse } from '@notionhq/client/build/src/api-endpoints';
 
 interface Props {
-  allPosts: PageObjectResponse[];
+  allPosts: Post[];
 }
 
 export const getStaticProps: GetStaticProps<Props> = async () => {
@@ -19,7 +19,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
 };
 
 const Home = ({ allPosts }: Props) => {
-  console.log(allPosts);
+  console.log('allPosts', allPosts);
   return (
     <>
       <Head>
