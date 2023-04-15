@@ -9,7 +9,10 @@ export type PostResponse = {
         }[]
     };
     tags: PageObjectResponse['properties']['multiSelect'] & {
-        multiSelect?: any[];
+        multiSelect?: {
+            name: string;
+            color: string;
+        }[];
     };
     slug: PageObjectResponse['properties']['richText'] & {
         richText?: {

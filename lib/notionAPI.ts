@@ -20,6 +20,11 @@ export const getAllposts = async () => {
     return formatPostResponse(posts.results);
 }
 
+const genetrateTags = (tags: {
+  name: string;
+  color: string;
+}[]) => tags.map((tag) => tag.name);
+
 const formatPostResponse = (posts: PageObjectResponse[]): Post[] => {
   const formatPosts: PostResponse[] = posts.map((_post) => {
     const post = camelcaseKeys(_post, { deep: true });
@@ -36,7 +41,7 @@ const formatPostResponse = (posts: PageObjectResponse[]): Post[] => {
   return formatPosts.map((post): Post => ({
       url: post.url as unknown as string || '',
       title: post.title.title?.[0]?.plainText || '',
-      tags: post.tags.multiSelect as string[],
+      tags: genetrateTags(post.tags.multiSelect || []) as string[],
       slug: post.slug.richText?.[0].plainText || '',
       publishDate: post.publishDate.createdTime as unknown as Date,
       lastEditedDate: post.lastEditedDate.lastEditedTime as unknown as Date,
