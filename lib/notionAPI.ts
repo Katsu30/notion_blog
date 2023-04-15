@@ -4,21 +4,21 @@ import { PageObjectResponse } from "@notionhq/client/build/src/api-endpoints";
 import camelcaseKeys from "camelcase-keys";
 
 const notion = new Client({
-    auth: process.env.NOTION_TOKEN,
+  auth: process.env.NOTION_TOKEN,
 });
 
 export const getAllposts = async () => {
-    if (!process.env.NOTION_DATABASE_ID) {
-        console.error("ERROR: no database id");
-        return;
-    }
+  if (!process.env.NOTION_DATABASE_ID) {
+    console.error("ERROR: no database id");
+    return;
+  }
 
-    const posts = await notion.databases.query({
-        database_id: process.env.NOTION_DATABASE_ID,
-    });
+  const posts = await notion.databases.query({
+    database_id: process.env.NOTION_DATABASE_ID,
+  });
 
-    return formatPostResponse(posts.results);
-}
+  return formatPostResponse(posts.results);
+};
 
 const genetrateTags = (tags: {
   name: string;
@@ -35,15 +35,15 @@ const formatPostResponse = (posts: PageObjectResponse[]): Post[] => {
       slug: post.properties.slug,
       publishDate: post.properties.publishDate,
       lastEditedDate: post.properties.lastEditedDate,
-  }
+    };
   });
 
   return formatPosts.map((post): Post => ({
-      url: post.url as unknown as string || '',
-      title: post.title.title?.[0]?.plainText || '',
-      tags: genetrateTags(post.tags.multiSelect || []) as string[],
-      slug: post.slug.richText?.[0].plainText || '',
-      publishDate: post.publishDate.createdTime as unknown as Date,
-      lastEditedDate: post.lastEditedDate.lastEditedTime as unknown as Date,
-    }))
+    url: post.url as unknown as string || "",
+    title: post.title.title?.[0]?.plainText || "",
+    tags: genetrateTags(post.tags.multiSelect || []) as string[],
+    slug: post.slug.richText?.[0].plainText || "",
+    publishDate: post.publishDate.createdTime as unknown as Date,
+    lastEditedDate: post.lastEditedDate.lastEditedTime as unknown as Date,
+  }));
 };
