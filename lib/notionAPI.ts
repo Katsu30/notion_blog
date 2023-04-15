@@ -1,4 +1,7 @@
+import { Post, PostResponse } from "@/domain/models/Post";
 import { Client } from "@notionhq/client";
+import { PageObjectResponse } from "@notionhq/client/build/src/api-endpoints";
+import camelcaseKeys from "camelcase-keys";
 
 const notion = new Client({
     auth: process.env.NOTION_TOKEN,
@@ -14,5 +17,26 @@ export const getAllposts = async () => {
         database_id: process.env.NOTION_DATABASE_ID,
     });
 
-    return posts.results;
+    return formatPostResponse(posts.results);
 }
+
+const formatPostResponse = (posts: PageObjectResponse[]): Post[] => {
+  const formatPosts: PostResponse[] = posts.map((_post) => {
+    const post = camelcaseKeys(_post, { deep: true });
+    return {
+      url: post.properties.url,
+      title: post.properties.title,
+      tags: post.properties.tags,
+      publishDate: post.properties.publishDate,
+      lastEditedDate: post.properties.lastEditedDate,
+  }
+  });
+
+  return formatPosts.map((post): Post => ({
+      url: post.url as unknown as string || '',
+      title: post.title.title?.[0]?.plainText || '',
+      tags: post.tags.multiSelect as string[],
+      publishDate: post.publishDate.createdTime as unknown as Date,
+      lastEditedDate: post.lastEditedDate.lastEditedTime as unknown as Date,
+    }))
+};
