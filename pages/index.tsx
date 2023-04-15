@@ -1,7 +1,7 @@
-import Head from 'next/head'
+import Head from "next/head";
 import { Post } from "@/domain/models/Post";
-import { getAllposts } from '@/lib/notionAPI'
-import { GetStaticProps } from 'next';
+import { getAllposts } from "@/lib/notionAPI";
+import { GetStaticProps } from "next";
 
 interface Props {
   allPosts: Post[];
@@ -19,7 +19,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
 };
 
 const Home = ({ allPosts }: Props) => {
-  console.log('allPosts', allPosts);
+  console.log("allPosts", allPosts);
   return (
     <>
       <Head>
@@ -28,7 +28,7 @@ const Home = ({ allPosts }: Props) => {
         <link rel="icon" href="/fabicon.ico" />
       </Head>
     </>
-  )
-}
+  );
+};
 
 export default Home;
