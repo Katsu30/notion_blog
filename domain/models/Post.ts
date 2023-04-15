@@ -6,11 +6,15 @@ export type PostResponse = {
         plain_text: string;
         href: string | null;
     }[]};
-    tags: PageObjectResponse['properties']['multi_select'] & {
-        multi_select?: any[];
+    tags: PageObjectResponse['properties']['multiSelect'] & {
+        multiSelect?: any[];
     };
-    publishDate: PageObjectResponse['properties']['created_time'];
-    lastEditedDate: PageObjectResponse['properties']['last_edited_time'];
+    publish_date: PageObjectResponse['properties']['created_time'] & {
+        created_time?: string;
+    } ;
+    last_edited_date: PageObjectResponse['properties']['last_edited_time'] & {
+        last_edited_time?: string;
+    };
 }
 
 export type Post = {
