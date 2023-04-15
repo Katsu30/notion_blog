@@ -21,25 +21,22 @@ export const getAllposts = async () => {
 }
 
 const formatPostResponse = (posts: PageObjectResponse[]): Post[] => {
-  console.log(posts[0].properties);
-  const formatPosts: PostResponse[] = posts.map((post) => (
-    {
-        url: post.properties.url,
-        title: post.properties.title,
-        tags: post.properties.tags,
-        publish_date: post.properties.publish_date,
-        last_edited_date: post.properties.last_edited_date,
-    }
-  ));
-
-  return formatPosts.map((_post): Post => {
+  const formatPosts: PostResponse[] = posts.map((_post) => {
     const post = camelcaseKeys(_post, { deep: true });
     return {
+      url: post.properties.url,
+      title: post.properties.title,
+      tags: post.properties.tags,
+      publishDate: post.properties.publishDate,
+      lastEditedDate: post.properties.lastEditedDate,
+  }
+  });
+
+  return formatPosts.map((post): Post => ({
       url: post.url as unknown as string || '',
       title: post.title.title?.[0]?.plainText || '',
       tags: post.tags.multiSelect as string[],
       publishDate: post.publishDate.createdTime as unknown as Date,
       lastEditedDate: post.lastEditedDate.lastEditedTime as unknown as Date,
-    }
-  })
+    }))
 };
