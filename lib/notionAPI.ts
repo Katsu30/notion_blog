@@ -27,6 +27,7 @@ const formatPostResponse = (posts: PageObjectResponse[]): Post[] => {
       url: post.properties.url,
       title: post.properties.title,
       tags: post.properties.tags,
+      slug: post.properties.slug,
       publishDate: post.properties.publishDate,
       lastEditedDate: post.properties.lastEditedDate,
   }
@@ -36,6 +37,7 @@ const formatPostResponse = (posts: PageObjectResponse[]): Post[] => {
       url: post.url as unknown as string || '',
       title: post.title.title?.[0]?.plainText || '',
       tags: post.tags.multiSelect as string[],
+      slug: post.slug.richText?.[0].plainText || '',
       publishDate: post.publishDate.createdTime as unknown as Date,
       lastEditedDate: post.lastEditedDate.lastEditedTime as unknown as Date,
     }))
