@@ -1,10 +1,21 @@
 import React from "react";
-import { getSinglePost } from "@/lib/notionAPI";
+
+import { getAllposts, getSinglePost } from "@/lib/notionAPI";
 import { Post } from "@/domain/models/Post";
 
 interface Props {
   params: Post;
 }
+
+export const getStaticPaths = async () => {
+  const allPosts = await getAllposts();
+  const paths = allPosts?.map(({ slug }) => ({ params: {slug} }));
+
+  return {
+    paths,
+    fallback: "blocking",
+  };
+};
 
 export const getStaticProps = async ({ params }: Props) => {
   const post = await getSinglePost(params.slug);

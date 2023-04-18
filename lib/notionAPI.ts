@@ -57,7 +57,7 @@ export const getSinglePost = async (slug: string) => {
   const response = await notion.databases.query({
     database_id: process.env.NOTION_DATABASE_ID,
     filter: {
-      property: "Slug",
+      property: "slug",
       formula: {
         string: {
           equals: slug,
@@ -67,6 +67,8 @@ export const getSinglePost = async (slug: string) => {
   });
 
   const page = response.results[0];
+  formatPostResponse(response.results as PageObjectResponse[])[0];
+  console.log( formatPostResponse(response.results as PageObjectResponse[])[0]);
   return {
     page
   };

@@ -34,6 +34,7 @@ const Home = ({ allPosts }: Props) => {
         {allPosts.map((post) => (
           <SinglePost 
             post={ post }
+            key={ post.slug }
           />
         ))}
       </main>
