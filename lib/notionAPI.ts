@@ -17,7 +17,7 @@ export const getAllposts = async () => {
     database_id: process.env.NOTION_DATABASE_ID,
   });
 
-  return formatPostResponse(posts.results);
+  return formatPostResponse(posts.results as PageObjectResponse[]);
 };
 
 const genetrateTags = (tags: {
