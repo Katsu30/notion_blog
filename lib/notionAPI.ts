@@ -47,3 +47,29 @@ const formatPostResponse = (posts: PageObjectResponse[]): Post[] => {
     lastEditedDate: post.lastEditedDate.lastEditedTime as unknown as Date,
   }));
 };
+
+export const getSinglePost = async (slug: string) => {
+  if (!process.env.NOTION_DATABASE_ID) {
+    console.error("ERROR: no database id");
+    return;
+  }
+
+  const response = await notion.databases.query({
+    database_id: process.env.NOTION_DATABASE_ID,
+    filter: {
+      property: "slug",
+      formula: {
+        string: {
+          equals: slug,
+        }
+      }
+    }
+  });
+
+  const page = response.results[0];
+  formatPostResponse(response.results as PageObjectResponse[])[0];
+  console.log( formatPostResponse(response.results as PageObjectResponse[])[0]);
+  return {
+    page
+  };
+};
