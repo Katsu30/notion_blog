@@ -1,7 +1,8 @@
 import { PageObjectResponse } from "@notionhq/client/build/src/api-endpoints";
 
 export type PostResponse = {
-  url: PageObjectResponse["properties"]["url"];
+  id: PageObjectResponse["id"];
+  url: PageObjectResponse["url"];
   title: PageObjectResponse["properties"]["title"] & {
     title?: {
       plainText?: string;
@@ -28,6 +29,7 @@ export type PostResponse = {
 }
 
 export type Post = {
+  id: string;
   url: string;
   title: string;
   tags: string[];
