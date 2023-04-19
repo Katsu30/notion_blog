@@ -1,11 +1,15 @@
-import { Post, PostResponse } from "@/domain/models/Post";
 import { Client } from "@notionhq/client";
-import { PageObjectResponse } from "@notionhq/client/build/src/api-endpoints";
+import { NotionToMarkdown } from "notion-to-md";
 import camelcaseKeys from "camelcase-keys";
+
+import { Post, PostResponse } from "@/domain/models/Post";
+import { PageObjectResponse } from "@notionhq/client/build/src/api-endpoints";
 
 const notion = new Client({
   auth: process.env.NOTION_TOKEN,
 });
+
+const n2m = new NotionToMarkdown({ notionClient: notion });
 
 export const getAllposts = async () => {
   if (!process.env.NOTION_DATABASE_ID) {
@@ -29,7 +33,8 @@ const formatPostResponse = (posts: PageObjectResponse[]): Post[] => {
   const formatPosts: PostResponse[] = posts.map((_post) => {
     const post = camelcaseKeys(_post, { deep: true });
     return {
-      url: post.properties.url,
+      id: post.id,
+      url: post.url,
       title: post.properties.title,
       tags: post.properties.tags,
       slug: post.properties.slug,
@@ -39,7 +44,8 @@ const formatPostResponse = (posts: PageObjectResponse[]): Post[] => {
   });
 
   return formatPosts.map((post): Post => ({
-    url: post.url as unknown as string || "",
+    id: post.id,
+    url: post.url,
     title: post.title.title?.[0]?.plainText || "",
     tags: genetrateTags(post.tags.multiSelect || []) as string[],
     slug: post.slug.richText?.[0].plainText || "",
@@ -66,10 +72,12 @@ export const getSinglePost = async (slug: string) => {
     }
   });
 
-  const page = response.results[0];
-  formatPostResponse(response.results as PageObjectResponse[])[0];
-  console.log( formatPostResponse(response.results as PageObjectResponse[])[0]);
+  const page = formatPostResponse(response.results as PageObjectResponse[])[0];
+  const mbblocks = await n2m.pageToMarkdown(page.id);
+  const mbString =n2m.toMarkdownString(mbblocks);
+
   return {
-    page
+    page,
+    markdown: mbString,
   };
 };
