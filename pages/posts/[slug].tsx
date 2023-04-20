@@ -1,5 +1,8 @@
 import React from "react";
 import dayjs from "dayjs";
+import { ReactMarkdown } from "react-markdown/lib/react-markdown";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
 
 import { getAllposts, getSinglePost } from "@/lib/notionAPI";
 import { Post } from "@/domain/models/Post";
@@ -31,7 +34,6 @@ export const getStaticPaths = async () => {
 };
 
 export const getStaticProps = async ({ params }: Params) => {
-  console.log("props", params);
   const response = await getSinglePost(params.slug);
 
   if (!response) {
@@ -56,13 +58,30 @@ const Post = ({ post, markdown }: Props) => {
         <div className="border-b-2 w-1/3 mt-1 border-sky-900"></div>
         <span className="text-gray-500">posted date at { dayjs(post.publishDate).format("YYYY-MM-DD") }</span>
         <br />
-        {post.tags.map((tag) => {
+        {post.tags.map((tag, i) => {
           return (
-            <p className="text-white bg-sky-900 rounded-xl font-medium mt-2 px-2 mx-1 inline-block">{ tag }</p>
+            <p key={i} className="text-white bg-sky-900 rounded-xl font-medium mt-2 px-2 mx-1 inline-block">{ tag }</p>
           );
         })}
         <div className="mt-10 font-medium">
-          { markdown }
+          <ReactMarkdown children={markdown} components={{
+            code({ inline, className, children, ...props}) {
+              const match = /language-(\w+)/.exec(className || "");
+              return !inline && match ? (
+                <SyntaxHighlighter
+                  {...props}
+                  children={String(children).replace(/\n$/, "")}
+                  style={vscDarkPlus}
+                  language={match[1]}
+                  PreTag="div"
+                />
+              ) : (
+                <code {...props} className={className}>
+                  {children}
+                </code>
+              );
+            }
+          }}/>
         </div>
       </div>
     </>

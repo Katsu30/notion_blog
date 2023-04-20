@@ -20,7 +20,6 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
 };
 
 const Home = ({ allPosts }: Props) => {
-  console.log("allPosts", allPosts);
   return (
     <div className="container w-full h-full mx-auto">
       <Head>
