@@ -1,7 +1,7 @@
 import Head from 'next/head';
 import { GetStaticProps } from 'next';
 import { Post } from '@/domain/models/Post';
-import { getAllposts } from '@/lib/notionAPI';
+import { getMultiplePosts } from '@/lib/notionAPI';
 import SinglePost from '@/components/Post/SinglePost';
 
 interface Props {
@@ -9,7 +9,8 @@ interface Props {
 }
 
 export const getStaticProps: GetStaticProps<Props> = async () => {
-  const allPosts = (await getAllposts()) || [];
+  const DEFAULT_POSTS_COUNT = 5;
+  const allPosts = (await getMultiplePosts(DEFAULT_POSTS_COUNT)) || [];
 
   return {
     props: {
