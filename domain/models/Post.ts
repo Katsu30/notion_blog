@@ -1,32 +1,32 @@
-import { PageObjectResponse } from "@notionhq/client/build/src/api-endpoints";
+import { PageObjectResponse } from '@notionhq/client/build/src/api-endpoints';
 
 export type PostResponse = {
-  id: PageObjectResponse["id"];
-  url: PageObjectResponse["url"];
-  title: PageObjectResponse["properties"]["title"] & {
+  id: PageObjectResponse['id'];
+  url: PageObjectResponse['url'];
+  title: PageObjectResponse['properties']['title'] & {
     title?: {
       plainText?: string;
       href?: string | null;
-    }[]
+    }[];
   };
-  tags: PageObjectResponse["properties"]["multiSelect"] & {
+  tags: PageObjectResponse['properties']['multiSelect'] & {
     multiSelect?: {
       name: string;
       color: string;
     }[];
   };
-  slug: PageObjectResponse["properties"]["richText"] & {
+  slug: PageObjectResponse['properties']['richText'] & {
     richText?: {
-      plainText?: string; 
-    }[]
-  }
-  publishDate: PageObjectResponse["properties"]["createdTime"] & {
+      plainText?: string;
+    }[];
+  };
+  publishDate: PageObjectResponse['properties']['createdTime'] & {
     createdTime?: string;
-  } ;
-  lastEditedDate: PageObjectResponse["properties"]["lastEditedTime"] & {
+  };
+  lastEditedDate: PageObjectResponse['properties']['lastEditedTime'] & {
     lastEditedTime?: string;
   };
-}
+};
 
 export type Post = {
   id: string;
@@ -36,4 +36,4 @@ export type Post = {
   slug: string;
   publishDate: Date;
   lastEditedDate: Date;
-}
+};

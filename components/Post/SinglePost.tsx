@@ -1,8 +1,8 @@
-import React from "react";
-import Link from "next/link";
-import dayjs from "dayjs";
+import React from 'react';
+import Link from 'next/link';
+import dayjs from 'dayjs';
 
-import { Post } from "@/domain/models/Post";
+import { Post } from '@/domain/models/Post';
 
 interface Props {
   post: Post;
@@ -19,7 +19,11 @@ export default function SinglePost({ post }: Props) {
           <h2 className="text-gray-100 text-2xl font-medium mb-2">{title}</h2>
           <div className="text-gray-100">{dateString}</div>
           {tags.map((tag) => {
-            return <span className="text-white bg-gray-500 rounded-xl px-2 pb-1 font-medium">{tag}</span>;
+            return (
+              <span className="text-white bg-gray-500 rounded-xl px-2 pb-1 font-medium">
+                {tag}
+              </span>
+            );
           })}
         </div>
       </div>
