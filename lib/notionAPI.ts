@@ -85,3 +85,14 @@ export const getSinglePost = async (slug: string) => {
     markdown: mbString,
   };
 };
+
+export const getMultiplePosts = async (posts = 5) => {
+  const allPosts = await getAllposts();
+
+  if (!allPosts) {
+    console.error('some errors have been occured.');
+    return;
+  }
+
+  return allPosts.length === 0 ? [] : allPosts.splice(0, posts);
+};
