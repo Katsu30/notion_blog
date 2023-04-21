@@ -1,15 +1,15 @@
-import Head from "next/head";
-import { GetStaticProps } from "next";
-import { Post } from "@/domain/models/Post";
-import { getAllposts } from "@/lib/notionAPI";
-import SinglePost from "@/components/Post/SinglePost";
+import Head from 'next/head';
+import { GetStaticProps } from 'next';
+import { Post } from '@/domain/models/Post';
+import { getAllposts } from '@/lib/notionAPI';
+import SinglePost from '@/components/Post/SinglePost';
 
 interface Props {
   allPosts: Post[];
 }
 
 export const getStaticProps: GetStaticProps<Props> = async () => {
-  const allPosts = await getAllposts() || [];
+  const allPosts = (await getAllposts()) || [];
 
   return {
     props: {
@@ -31,10 +31,7 @@ const Home = ({ allPosts }: Props) => {
       <main className="container w-full mt-16">
         <h1 className="text-5xl font-medium text-center mb-16">Notion Blog</h1>
         {allPosts.map((post) => (
-          <SinglePost 
-            post={ post }
-            key={ post.slug }
-          />
+          <SinglePost post={post} key={post.slug} />
         ))}
       </main>
     </div>
