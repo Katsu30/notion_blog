@@ -17,9 +17,12 @@
     "linebreak-style": ["error", "unix"],
     "quotes": ["error", "single"],
     "semi": ["error", "always"],
-    "prettier/prettier": ["error", {
+    "prettier/prettier": [
+      "error",
+      {
         "singleQuote": true,
         "semi": true
-    }]
+      }
+    ]
   }
 }
