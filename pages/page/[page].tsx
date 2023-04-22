@@ -1,10 +1,14 @@
 import React from 'react';
-import { GetStaticProps } from 'next';
+import { GetStaticProps, GetStaticPropsContext, PreviewData } from 'next';
 import Head from 'next/head';
+import { ParsedUrlQuery } from 'querystring';
+import { match } from 'ts-pattern';
 
-import { getAllposts, getMultiplePosts } from '@/lib/notionAPI';
+import { getAllposts, getPostsByPage } from '@/lib/notionAPI';
+import { isArray } from '@/lib/util/isArray';
 import { Post } from '@/domain/models/Post';
 import SinglePost from '@/components/Post/SinglePost';
+import { DEFAULT_POSTS_COUNT } from '@/constants';
 
 interface Props {
   posts: Post[];
@@ -23,11 +27,11 @@ export const getStaticPaths = async () => {
     console.error('cannot fetch blog posts');
     return;
   }
-  const paths: Params[] = [...Array(Math.ceil(allPosts.length / 10))].map(
-    (_, i) => {
-      return { params: { page: (i + 1).toString(10) } };
-    }
-  );
+  const paths: Params[] = [
+    ...Array(Math.ceil(allPosts.length / DEFAULT_POSTS_COUNT)),
+  ].map((_, i) => {
+    return { params: { page: (i + 1).toString(10) } };
+  });
 
   return {
     paths,
@@ -35,13 +39,25 @@ export const getStaticPaths = async () => {
   };
 };
 
-export const getStaticProps: GetStaticProps<Props> = async () => {
-  const DEFAULT_POSTS_COUNT = 5;
-  const posts = (await getMultiplePosts(DEFAULT_POSTS_COUNT)) || [];
+const getPageQueryAsNumber = (pageQuery: string | string[] | undefined) => {
+  if (isArray(pageQuery)) return parseInt(pageQuery[0]);
+
+  return match(typeof pageQuery)
+    .with('string', () => parseInt(pageQuery as string, 10))
+    .with('undefined', () => 1)
+    .otherwise(() => 1);
+};
+
+export const getStaticProps: GetStaticProps<Props> = async ({
+  params,
+}: GetStaticPropsContext<ParsedUrlQuery, PreviewData>) => {
+  const currentPageQuery = params?.page;
+  const postsByPage =
+    (await getPostsByPage(getPageQueryAsNumber(currentPageQuery))) || [];
 
   return {
     props: {
-      posts,
+      posts: postsByPage,
     },
     revalidate: 60 * 60 * 6,
   };

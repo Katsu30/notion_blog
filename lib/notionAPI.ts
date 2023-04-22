@@ -4,6 +4,7 @@ import camelcaseKeys from 'camelcase-keys';
 
 import { Post, PostResponse } from '@/domain/models/Post';
 import { PageObjectResponse } from '@notionhq/client/build/src/api-endpoints';
+import { DEFAULT_POSTS_COUNT } from '@/constants';
 
 const notion = new Client({
   auth: process.env.NOTION_TOKEN,
@@ -86,7 +87,7 @@ export const getSinglePost = async (slug: string) => {
   };
 };
 
-export const getMultiplePosts = async (posts = 5) => {
+export const getMultiplePosts = async (posts = DEFAULT_POSTS_COUNT) => {
   const allPosts = await getAllposts();
 
   if (!allPosts) {
@@ -95,4 +96,21 @@ export const getMultiplePosts = async (posts = 5) => {
   }
 
   return allPosts.length === 0 ? [] : allPosts.splice(0, posts);
+};
+
+export const getPostsByPage = async (
+  pageNum = 1,
+  posts = DEFAULT_POSTS_COUNT
+) => {
+  const allPosts = await getAllposts();
+  if (!allPosts) {
+    console.error('some errors have been occured.');
+    return;
+  }
+
+  const sliceTop = (pageNum - 1) * posts;
+
+  return allPosts.length === 0
+    ? []
+    : allPosts.splice(sliceTop, sliceTop + posts);
 };

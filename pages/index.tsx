@@ -3,13 +3,13 @@ import { GetStaticProps } from 'next';
 import { Post } from '@/domain/models/Post';
 import { getMultiplePosts } from '@/lib/notionAPI';
 import SinglePost from '@/components/Post/SinglePost';
+import { DEFAULT_POSTS_COUNT } from '@/constants';
 
 interface Props {
   allPosts: Post[];
 }
 
 export const getStaticProps: GetStaticProps<Props> = async () => {
-  const DEFAULT_POSTS_COUNT = 5;
   const allPosts = (await getMultiplePosts(DEFAULT_POSTS_COUNT)) || [];
 
   return {
