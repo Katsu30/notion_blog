@@ -115,6 +115,28 @@ export const getPostsByPage = async (
     : allPosts.splice(sliceTop, sliceTop + posts);
 };
 
+export const getPostsByByTagAndPage = async (
+  tagName: string,
+  pageNum = 1,
+  posts = DEFAULT_POSTS_COUNT
+) => {
+  const allPosts = await getAllposts();
+  if (!allPosts) {
+    console.error('some errors were occured.');
+    return [];
+  }
+
+  const filteredPosts = allPosts.filter((post) =>
+    post.tags.find((tag) => tag === tagName)
+  );
+
+  const sliceTop = (pageNum - 1) * posts;
+
+  return filteredPosts.length === 0
+    ? []
+    : filteredPosts.splice(sliceTop, sliceTop + posts);
+};
+
 export const getMaximumPagenationNumber = async () => {
   const allPosts = await getAllposts();
 

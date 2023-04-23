@@ -7,6 +7,7 @@ import { match } from 'ts-pattern';
 import {
   getAllposts,
   getMaximumPagenationNumber,
+  getPostsByByTagAndPage,
   getPostsByPage,
 } from '@/lib/notionAPI';
 import { isArray } from '@/lib/util/isArray';
