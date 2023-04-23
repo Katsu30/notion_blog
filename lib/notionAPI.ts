@@ -91,8 +91,8 @@ export const getMultiplePosts = async (posts = DEFAULT_POSTS_COUNT) => {
   const allPosts = await getAllposts();
 
   if (!allPosts) {
-    console.error('some errors have been occured.');
-    return;
+    console.error('some errors were occured.');
+    return [];
   }
 
   return allPosts.length === 0 ? [] : allPosts.splice(0, posts);
@@ -104,8 +104,8 @@ export const getPostsByPage = async (
 ) => {
   const allPosts = await getAllposts();
   if (!allPosts) {
-    console.error('some errors have been occured.');
-    return;
+    console.error('some errors were occured.');
+    return [];
   }
 
   const sliceTop = (pageNum - 1) * posts;
@@ -113,4 +113,17 @@ export const getPostsByPage = async (
   return allPosts.length === 0
     ? []
     : allPosts.splice(sliceTop, sliceTop + posts);
+};
+
+export const getMaximumPagenationNumber = async () => {
+  const allPosts = await getAllposts();
+
+  if (!allPosts) {
+    console.error('some errors were occured.');
+    return 1;
+  }
+
+  return allPosts.length > 0
+    ? Math.ceil(allPosts.length / DEFAULT_POSTS_COUNT)
+    : 1;
 };

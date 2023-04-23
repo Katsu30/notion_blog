@@ -4,14 +4,21 @@ import Head from 'next/head';
 import { ParsedUrlQuery } from 'querystring';
 import { match } from 'ts-pattern';
 
-import { getAllposts, getPostsByPage } from '@/lib/notionAPI';
+import {
+  getAllposts,
+  getMaximumPagenationNumber,
+  getPostsByPage,
+} from '@/lib/notionAPI';
 import { isArray } from '@/lib/util/isArray';
 import { Post } from '@/domain/models/Post';
 import SinglePost from '@/components/Post/SinglePost';
 import { DEFAULT_POSTS_COUNT } from '@/constants';
+import { Pagenation } from '@/components/Pagenation/Pagenation';
 
 interface Props {
   posts: Post[];
+  pageNumber: number;
+  maxPagenationNumber: number;
 }
 
 interface Params {
@@ -51,19 +58,22 @@ const getPageQueryAsNumber = (pageQuery: string | string[] | undefined) => {
 export const getStaticProps: GetStaticProps<Props> = async ({
   params,
 }: GetStaticPropsContext<ParsedUrlQuery, PreviewData>) => {
-  const currentPageQuery = params?.page;
-  const postsByPage =
-    (await getPostsByPage(getPageQueryAsNumber(currentPageQuery))) || [];
+  const pageNumber = getPageQueryAsNumber(params?.page);
+  const postsByPage = await getPostsByPage(pageNumber);
+
+  const maxPagenationNumber = await getMaximumPagenationNumber();
 
   return {
     props: {
       posts: postsByPage,
+      pageNumber,
+      maxPagenationNumber,
     },
     revalidate: 60 * 60 * 6,
   };
 };
 
-const Post = ({ posts }: Props) => {
+const Post = ({ posts, pageNumber, maxPagenationNumber }: Props) => {
   return (
     <>
       <div className="container w-full h-full mx-auto">
@@ -80,6 +90,10 @@ const Post = ({ posts }: Props) => {
           {posts.map((post) => (
             <SinglePost post={post} key={post.slug} />
           ))}
+          <Pagenation
+            numberOfPage={pageNumber}
+            maxPageNum={maxPagenationNumber}
+          />
         </main>
       </div>
     </>
