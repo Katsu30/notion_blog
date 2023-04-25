@@ -5,10 +5,11 @@ import { ParsedUrlQuery } from 'querystring';
 import { match } from 'ts-pattern';
 
 import {
+  getAllTags,
   getAllposts,
   getMaximumPagenationNumber,
+  getMaximumPagenationNumberByTag,
   getPostsByByTagAndPage,
-  getPostsByPage,
 } from '@/lib/notionAPI';
 import { isArray } from '@/lib/util/isArray';
 import { Post } from '@/domain/models/Post';
@@ -31,11 +32,27 @@ interface Params {
 
 export const getStaticPaths = async () => {
   const allPosts = await getAllposts();
+  const allTags = await getAllTags();
 
   if (!allPosts) {
     console.error('cannot fetch blog posts');
     return;
   }
+
+  if (!allTags) {
+    console.error('cannot fetch blog tags');
+    return;
+  }
+
+  const params = [];
+
+  allTags.map(async (tag) => {
+    const numOfPagesByTag = await getMaximumPagenationNumberByTag(tag);
+    [...Array(numOfPagesByTag)].forEach((_, i) => {
+      params.push({ params: { tag, page: (i + 1).toString(10) } });
+    });
+  });
+
   const paths: Params[] = [
     ...Array(Math.ceil(allPosts.length / DEFAULT_POSTS_COUNT)),
   ].map((_, i) => {
