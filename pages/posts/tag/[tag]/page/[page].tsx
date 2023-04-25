@@ -5,9 +5,11 @@ import { ParsedUrlQuery } from 'querystring';
 import { match } from 'ts-pattern';
 
 import {
+  getAllTags,
   getAllposts,
   getMaximumPagenationNumber,
-  getPostsByPage,
+  getMaximumPagenationNumberByTag,
+  getPostsByByTagAndPage,
 } from '@/lib/notionAPI';
 import { isArray } from '@/lib/util/isArray';
 import { Post } from '@/domain/models/Post';
@@ -24,20 +26,37 @@ interface Props {
 interface Params {
   params: {
     page: string;
+    tag: string;
   };
 }
 
 export const getStaticPaths = async () => {
   const allPosts = await getAllposts();
+  const allTags = await getAllTags();
 
   if (!allPosts) {
     console.error('cannot fetch blog posts');
     return;
   }
+
+  if (!allTags) {
+    console.error('cannot fetch blog tags');
+    return;
+  }
+
+  const params = [];
+
+  allTags.map(async (tag) => {
+    const numOfPagesByTag = await getMaximumPagenationNumberByTag(tag);
+    [...Array(numOfPagesByTag)].forEach((_, i) => {
+      params.push({ params: { tag, page: (i + 1).toString(10) } });
+    });
+  });
+
   const paths: Params[] = [
     ...Array(Math.ceil(allPosts.length / DEFAULT_POSTS_COUNT)),
   ].map((_, i) => {
-    return { params: { page: (i + 1).toString(10) } };
+    return { params: { tag: 'blog', page: (i + 1).toString(10) } };
   });
 
   return {
@@ -55,17 +74,28 @@ const getPageQueryAsNumber = (pageQuery: string | string[] | undefined) => {
     .otherwise(() => 1);
 };
 
+const getTagQueryAsString = (tagQuery: string | string[] | undefined) => {
+  if (isArray(tagQuery)) return tagQuery[0];
+
+  return match(typeof tagQuery)
+    .with('string', () => tagQuery as string)
+    .otherwise(() => console.error('getTagQueryAsString went sometiong wrong'));
+};
+
 export const getStaticProps: GetStaticProps<Props> = async ({
   params,
 }: GetStaticPropsContext<ParsedUrlQuery, PreviewData>) => {
   const pageNumber = getPageQueryAsNumber(params?.page);
-  const postsByPage = await getPostsByPage(pageNumber);
+  const pageTag = getTagQueryAsString(params?.tag);
+  const postsByTag = pageTag
+    ? await getPostsByByTagAndPage(pageTag, pageNumber)
+    : [];
 
   const maxPagenationNumber = await getMaximumPagenationNumber();
 
   return {
     props: {
-      posts: postsByPage,
+      posts: postsByTag,
       pageNumber,
       maxPagenationNumber,
     },

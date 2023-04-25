@@ -115,6 +115,28 @@ export const getPostsByPage = async (
     : allPosts.splice(sliceTop, sliceTop + posts);
 };
 
+export const getPostsByByTagAndPage = async (
+  tagName: string,
+  pageNum = 1,
+  posts = DEFAULT_POSTS_COUNT
+) => {
+  const allPosts = await getAllposts();
+  if (!allPosts) {
+    console.error('some errors were occured.');
+    return [];
+  }
+
+  const filteredPosts = allPosts.filter((post) =>
+    post.tags.find((tag) => tag === tagName)
+  );
+
+  const sliceTop = (pageNum - 1) * posts;
+
+  return filteredPosts.length === 0
+    ? []
+    : filteredPosts.splice(sliceTop, sliceTop + posts);
+};
+
 export const getMaximumPagenationNumber = async () => {
   const allPosts = await getAllposts();
 
@@ -126,4 +148,35 @@ export const getMaximumPagenationNumber = async () => {
   return allPosts.length > 0
     ? Math.ceil(allPosts.length / DEFAULT_POSTS_COUNT)
     : 1;
+};
+
+export const getMaximumPagenationNumberByTag = async (tag: string) => {
+  const allPosts = await getAllposts();
+
+  if (!allPosts) {
+    console.error('some errors were occured.');
+    return 1;
+  }
+
+  const filteredByTag = allPosts.filter((post) => {
+    return post.tags.some((t) => t === tag);
+  });
+
+  return filteredByTag.length > 0
+    ? Math.ceil(allPosts.length / DEFAULT_POSTS_COUNT)
+    : 1;
+};
+
+export const getAllTags = async () => {
+  const allPosts = await getAllposts();
+
+  if (!allPosts) {
+    console.error('some errors were occured.');
+    return;
+  }
+
+  const dupricated = allPosts.flatMap((post) => post.tags);
+  const tags = Array.from(new Set(dupricated));
+
+  return tags;
 };

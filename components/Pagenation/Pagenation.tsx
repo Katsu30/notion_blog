@@ -22,9 +22,9 @@ export const Pagenation = ({ numberOfPage = 1, maxPageNum = 1 }: Props) => {
       <ul className="flex items-center justify-center gap-4">
         {[...Array(maxPageNum > PAGENATION_COUNT ? 5 : maxPageNum)].map(
           (_, i) => (
-            <li className="bg-sky-900 rounded-lg w-6 h-8 relative">
+            <li key={i} className="bg-sky-900 rounded-lg w-6 h-8 relative">
               <Link
-                href={`/page/${i + getPagenationAdditions()}`}
+                href={`/posts/page/${i + getPagenationAdditions()}`}
                 className="absolute top-2/4 left-2/4 -translate-x-2/4 -translate-y-2/4 text-gray-100"
               >
                 {i + getPagenationAdditions()}
