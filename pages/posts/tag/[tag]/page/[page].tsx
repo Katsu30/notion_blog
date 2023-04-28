@@ -7,7 +7,6 @@ import { match } from 'ts-pattern';
 import {
   getAllTags,
   getAllposts,
-  getMaximumPagenationNumber,
   getMaximumPagenationNumberByTag,
   getPostsByByTagAndPage,
 } from '@/lib/notionAPI';
@@ -19,6 +18,7 @@ import { Pagenation } from '@/components/Pagenation/Pagenation';
 
 interface Props {
   posts: Post[];
+  pageTag: string;
   pageNumber: number;
   maxPagenationNumber: number;
 }
@@ -79,23 +79,32 @@ const getTagQueryAsString = (tagQuery: string | string[] | undefined) => {
 
   return match(typeof tagQuery)
     .with('string', () => tagQuery as string)
-    .otherwise(() => console.error('getTagQueryAsString went sometiong wrong'));
+    .otherwise(() => {
+      console.error('getTagQueryAsString went sometiong wrong');
+      return null;
+    });
 };
 
 export const getStaticProps: GetStaticProps<Props> = async ({
   params,
 }: GetStaticPropsContext<ParsedUrlQuery, PreviewData>) => {
   const pageNumber = getPageQueryAsNumber(params?.page);
-  const pageTag = getTagQueryAsString(params?.tag);
+  const pageTag = getTagQueryAsString(params?.tag) || '';
+
+  if (!pageTag) {
+    console.error('cannot fetch blog tag');
+  }
+
   const postsByTag = pageTag
     ? await getPostsByByTagAndPage(pageTag, pageNumber)
     : [];
 
-  const maxPagenationNumber = await getMaximumPagenationNumber();
+  const maxPagenationNumber = await getMaximumPagenationNumberByTag(pageTag);
 
   return {
     props: {
       posts: postsByTag,
+      pageTag,
       pageNumber,
       maxPagenationNumber,
     },
@@ -103,7 +112,7 @@ export const getStaticProps: GetStaticProps<Props> = async ({
   };
 };
 
-const Post = ({ posts, pageNumber, maxPagenationNumber }: Props) => {
+const Post = ({ posts, pageTag, pageNumber, maxPagenationNumber }: Props) => {
   return (
     <>
       <div className="container w-full h-full mx-auto">
@@ -121,6 +130,8 @@ const Post = ({ posts, pageNumber, maxPagenationNumber }: Props) => {
             <SinglePost post={post} key={post.slug} />
           ))}
           <Pagenation
+            toPage={'tag'}
+            tag={pageTag}
             numberOfPage={pageNumber}
             maxPageNum={maxPagenationNumber}
           />

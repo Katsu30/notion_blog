@@ -163,7 +163,7 @@ export const getMaximumPagenationNumberByTag = async (tag: string) => {
   });
 
   return filteredByTag.length > 0
-    ? Math.ceil(allPosts.length / DEFAULT_POSTS_COUNT)
+    ? Math.ceil(filteredByTag.length / DEFAULT_POSTS_COUNT)
     : 1;
 };
 
