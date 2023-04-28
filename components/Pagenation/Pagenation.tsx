@@ -2,6 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 
 import { PAGENATION_COUNT } from '@/constants';
+import { getPageLink } from '@/lib/linkHelper';
 
 interface Props {
   numberOfPage?: number;
@@ -11,10 +12,9 @@ interface Props {
 }
 
 export const Pagenation = ({
-  toPage = 'page',
-  tag = 'none',
   numberOfPage = 1,
   maxPageNum = 1,
+  tag,
 }: Props) => {
   const getPagenationAdditions = () => {
     if (numberOfPage - maxPageNum / 2 > 1) {
@@ -31,11 +31,7 @@ export const Pagenation = ({
           (_, i) => (
             <li key={i} className="bg-sky-900 rounded-lg w-6 h-8 relative">
               <Link
-                href={
-                  toPage === 'tag'
-                    ? `/posts/page/${i + getPagenationAdditions()}`
-                    : `/posts/tag/${tag}/page/${i + getPagenationAdditions()}`
-                }
+                href={getPageLink(i + getPagenationAdditions(), tag)}
                 className="absolute top-2/4 left-2/4 -translate-x-2/4 -translate-y-2/4 text-gray-100"
               >
                 {i + getPagenationAdditions()}

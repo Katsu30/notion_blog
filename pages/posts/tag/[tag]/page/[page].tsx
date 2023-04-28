@@ -130,7 +130,6 @@ const Post = ({ posts, pageTag, pageNumber, maxPagenationNumber }: Props) => {
             <SinglePost post={post} key={post.slug} />
           ))}
           <Pagenation
-            toPage={'tag'}
             tag={pageTag}
             numberOfPage={pageNumber}
             maxPageNum={maxPagenationNumber}
