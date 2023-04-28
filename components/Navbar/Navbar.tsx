@@ -3,9 +3,12 @@ import React from 'react';
 
 export default function Navbar() {
   return (
-    <nav className="container mx-auto lg:px-2 px-5 lg:w-2/5">
+    <nav className="mx-auto lg:px-2 px-5 lg:w-3/5">
       <div className="container flex items-center justify-between mx-auto">
-        <Link href="/" className="block text-2xl fonr-medium">
+        <Link
+          href="/"
+          className="block text-2xl fonr-medium hover:text-sky-900 transition-all duration-300"
+        >
           Saudi is a pen
         </Link>
         <div>
@@ -16,22 +19,6 @@ export default function Navbar() {
                 className="block px-4 py-2 hover:text-sky-900 transition-all duration-300"
               >
                 Home
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="#"
-                className="block px-4 py-2 hover:text-sky-900 transition-all duration-300"
-              >
-                Twitter
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="#"
-                className="block px-4 py-2 hover:text-sky-900 transition-all duration-300"
-              >
-                Qiita
               </Link>
             </li>
           </ul>
